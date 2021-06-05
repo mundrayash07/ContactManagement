@@ -1,0 +1,66 @@
+﻿@model List <ContactManager.Models.Contact>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<table>
+    <tr>
+        <th></th>
+        <th>
+            Id
+        </th>
+        <th>
+            FirstName
+        </th>
+        <th>
+            LastName
+        </th>
+        <th>
+            Phone
+        </th>
+        <th>
+            Email
+        </th>
+    </tr>
+
+    @foreach (var item in @Model)
+    {
+
+    <tr>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+
+        </td>
+        <td>
+            @Html.Encode(item.Id)
+        </td>
+        <td>
+            @Html.Encode(item.FirstName)
+        </td>
+        <td>
+            @Html.Encode(item.LastName)
+        </td>
+        <td>
+            @Html.Encode(item.Phone)
+        </td>
+        <td>
+            @Html.Encode(item.Email)
+        </td>
+        <td>
+            @Html.Encode(item.Status)
+        </td>
+    </tr>
+    }
+
+
+
+</table>
+
+<p>
+     @Html.ActionLink("Create New", "Create") 
+</p>
+
