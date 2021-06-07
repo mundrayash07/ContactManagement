@@ -11,7 +11,7 @@ namespace ContactManager.Models
         private IContactRepository _repository;
 
         public ContactManagerService(IValidationDictionary validationDictionary)
-            : this(validationDictionary, new EntityContactManagerRepository())
+            : this(validationDictionary, new ContactRepository())
         { }
 
         public ContactManagerService(IValidationDictionary validationDictionary, IContactRepository repository)
@@ -44,7 +44,7 @@ namespace ContactManager.Models
             // Database logic
             try
             {
-                _repository.CreateContact(contactToCreate);
+                _repository.Insert(contactToCreate);
             }
             catch
             {
@@ -62,7 +62,7 @@ namespace ContactManager.Models
             // Database logic
             try
             {
-                _repository.EditContact(contactToEdit);
+                _repository.Update(contactToEdit);
             }
             catch
             {
@@ -71,11 +71,11 @@ namespace ContactManager.Models
             return true;
         }
 
-        public bool DeleteContact(Contact contactToDelete)
+        public bool DeleteContact(int id)
         {
             try
             {
-                _repository.DeleteContact(contactToDelete);
+                _repository.Delete(id);
             }
             catch
             {
@@ -86,12 +86,12 @@ namespace ContactManager.Models
 
         public Contact GetContact(int id)
         {
-            return _repository.GetContact(id);
+            return _repository.GetById(id);
         }
 
         public IEnumerable<Contact> ListContacts()
         {
-            return _repository.ListContacts();
+            return _repository.GetAll();
         }
 
         #endregion

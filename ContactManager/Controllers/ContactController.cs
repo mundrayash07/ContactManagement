@@ -15,8 +15,9 @@ namespace ContactManager.Controllers
     {
         private IContactRepository _repository;
         public ContactController()
-            : this(new EntityContactManagerRepository())
-        { }
+        {
+            _repository = new ContactRepository(new ContactManagerDBEntities());
+        }
 
         public ContactController(IContactRepository repository)
         {
@@ -40,111 +41,60 @@ namespace ContactManager.Controllers
                 ModelState.AddModelError("Email", "Invalid email address.");
         }
 
+        [HttpGet]
         public ActionResult Index()
         {
-            return View(_entities.ContactSet.ToList());
+            var model = _repository.GetAll();
+            return View(model);
         }
-
-        //
-        // GET: /Home/Details/5
-
-        public ActionResult Details(int id)
+        [HttpGet]
+        public ActionResult AddContact()
         {
             return View();
         }
-
-        //
-        // GET: /Home/Create
-
-        public ActionResult Create()
+        [HttpPost]
+        public ActionResult AddContact(Contact model)
         {
+            if (ModelState.IsValid)
+            {
+                _repository.Insert(model);
+                _repository.Save();
+                return RedirectToAction("Index", "Employee");
+            }
             return View();
         }
-
-        //
-        // POST: /Home/Create
-
-        [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Create([Bind(Exclude = "Id")] Contact contactToCreate)
+        [HttpGet]
+        public ActionResult EditContact(int id)
         {
-            ValidateContact(contactToCreate);
-
-            if (!ModelState.IsValid)
-                return View();
-
-            try
+            Contact model = _repository.GetById(id);
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult EditContact(Contact model)
+        {
+            if (ModelState.IsValid)
             {
-                _entities.AddToContactSet(contactToCreate);
-                _entities.SaveChanges();
-                return RedirectToAction("Index");
+                _repository.Update(model);
+                _repository.Save();
+                return RedirectToAction("Index", "Contact");
             }
-            catch
+            else
             {
-                return View();
+                return View(model);
             }
         }
-
-        //
-        // GET: /Home/Edit/5
-
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public ActionResult DeleteContact(int id)
         {
-            var contactToEdit = (from c in _entities.ContactSet
-                                 where c.Id == id
-                                 select c).FirstOrDefault();
-
-            return View(contactToEdit);
+            Contact model = _repository.GetById(id);
+            return View(model);
         }
-        //
-        // POST: /Home/Edit/5
-
-        [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Edit(Contact contactToEdit)
-        {
-            ValidateContact(contactToEdit);
-            if (!ModelState.IsValid)
-                return View();
-
-            try
-            {
-                var originalContact = (from c in _entities.ContactSet
-                                       where c.Id == contactToEdit.Id
-                                       select c).FirstOrDefault();
-                //_entities.ApplyPropertyChanges(originalContact, contactToEdit);
-                _entities.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        [HttpPost]
         public ActionResult Delete(int id)
         {
-            var contactToDelete = (from c in _entities.ContactSet
-                                   where c.Id == id
-                                   select c).FirstOrDefault();
-
-            return View(contactToDelete);
-        }
-        [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Delete(Models.Contact contactToDelete)
-        {
-            try
-            {
-                var originalContact = (from c in _entities.ContactSet
-                                       where c.Id == contactToDelete.Id
-                                       select c).FirstOrDefault();
-
-               
-                _entities.DeleteObject(originalContact);
-                _entities.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            _repository.Delete(id);
+            _repository.Save();
+            return RedirectToAction("Index", "Contact");
         }
     }
 }

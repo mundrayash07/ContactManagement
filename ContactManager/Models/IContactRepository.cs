@@ -8,11 +8,12 @@ namespace ContactManager.Models
 {
     public interface IContactRepository
     {
-        Contact CreateContact(Contact contactToCreate);
-        void DeleteContact(Contact contactToDelete);
-        Contact EditContact(Contact contactToUpdate);
-        Contact GetContact(int id);
-        List<Contact> ListContacts();
+        IEnumerable<Contact> GetAll();
+        Contact GetById(int Id);
+        void Insert(Contact contactToCreate);
+        void Update(Contact contactToUpdate);
+        void Delete(int contactToDelete);
+        void Save();
 
     }
 }
